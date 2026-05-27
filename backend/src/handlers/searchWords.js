@@ -15,7 +15,7 @@ export const handler = async (event) => {
 	try {
 		const query = event.queryStringParameters?.q || '';
 
-		if (!query) {
+		if (!query.trim()) {
 			return response(400, {
 				message: 'Search query is required',
 			});
@@ -32,12 +32,25 @@ export const handler = async (event) => {
 		const items = result.Items || [];
 
 		const filtered = items.filter((item) => {
-			const word = item.normalized_word || '';
+			const searchableText = [
+				item.word,
+				item.normalized_word,
+				item.meaning_en,
+				item.meaning_am,
+				item.example_sentence_hadiyya,
+				item.example_sentence_en,
+				item.example_sentence_am,
+				...(Array.isArray(item.tags) ? item.tags : []),
+			]
+				.filter(Boolean)
+				.join(' ')
+				.toLowerCase();
 
-			return word.includes(normalizedQuery);
+			return searchableText.includes(normalizedQuery);
 		});
 
 		return response(200, {
+			query,
 			count: filtered.length,
 			results: filtered,
 		});

@@ -1,0 +1,38 @@
+<div class="container">
+  <h1>Hadiyyisa Dictionary</h1>
+
+  <div class="search-box">
+    <input
+      type="text"
+      placeholder="Search Hadiyyisa word..."
+      [ngModel]="searchTerm()"
+      (ngModelChange)="searchTerm.set($event)"
+      (keyup.enter)="search()"
+    />
+
+    <button (click)="search()" [disabled]="loading()">
+      {{ loading() ? 'Searching...' : 'Search' }}
+    </button>
+  </div>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (results().length > 0) {
+    @for (item of results(); track item.PK) {
+      <div class="result-card">
+        <h2>{{ item.word }}</h2>
+
+        <p><strong>English:</strong> {{ item.meaning_en }}</p>
+        <p><strong>Amharic:</strong> {{ item.meaning_am }}</p>
+
+        <hr />
+
+        <p><strong>Example (Hadiyyisa):</strong> {{ item.example_sentence_hadiyya }}</p>
+        <p><strong>Example (English):</strong> {{ item.example_sentence_en }}</p>
+        <p><strong>Example (Amharic):</strong> {{ item.example_sentence_am }}</p>
+      </div>
+    }
+  }
+</div>
